@@ -27,8 +27,7 @@ def add_context(user_input: str) -> str:
 
 
 def prompt(query: str) -> str:
-    # TODO: This is where the AI model will be prompted, and the response will be returned
-    return "Hi! I'm not an AI, and this probably isn't a very helpful response, but I'm putting it here for debug purposes!"
+    return model.prompt(query)
 
 
 def store(query: str, response: str) -> None:
