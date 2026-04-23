@@ -69,3 +69,7 @@ if __name__ == "__main__":
     )
 
     connection.store_memory(memory)
+
+    memories = connection.retrieve_all_memories()
+
+    print(memories)
