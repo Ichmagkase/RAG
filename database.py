@@ -18,6 +18,31 @@ class DBConnection:
             );
         """)
 
+    def retrieve_all_memories(self):
+        # 1. Fetch ALL rows from the database
+        self.cur.execute("SELECT id, content, embedding, importance FROM memories")
+        rows = self.cur.fetchall()
+
+        all_memories = []
+
+        # 2. Iterate through and deserialize the embeddings
+        for row in rows:
+            mem_id, content, embedding_blob, importance = row
+
+            # Deserialize the BLOB back into a Python list of floats
+            mem_vector = pickle.loads(embedding_blob)
+
+            all_memories.append(
+                {
+                    "id": mem_id,
+                    "content": content,
+                    "embedding": mem_vector,
+                    "importance": importance,
+                }
+            )
+
+        return all_memories
+
     def store_memory(self, memory: Memory):
         # 1. Serialize the embedding vector into bytes (BLOB)
         embedding_blob = pickle.dumps(memory.embedding)
