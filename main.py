@@ -2,7 +2,6 @@ from database import DBConnection
 from transformer import Transformer
 from model import Model
 from memory import Memory
-from pathlib import Path
 
 db = DBConnection()
 t = Transformer()
@@ -51,10 +50,6 @@ def main():
         response = prompt(query)
         print(response)
         store(user_input, response)
-
-    db_path = Path("memory.db")
-    if db_path.exists():
-        db_path.unlink()
 
 
 if __name__ == "__main__":
