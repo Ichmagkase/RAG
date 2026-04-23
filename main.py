@@ -12,7 +12,7 @@ top_k = 5
 
 def add_context(user_input: str) -> str:
     memories = db.retrieve_all_memories()
-    t.sort_by_relevance(memories)
+    t.sort_by_relevance(memories, user_input)
     query: str = user_input
 
     query += "\n\n---ADDITIONAL CONTEXT FROM PREVIOUS CONVERSATIONS HAS BEEN ADDED BELOW---\n\n"
@@ -21,6 +21,7 @@ def add_context(user_input: str) -> str:
         if i > len(memories) - 1:
             break
         memories[i].importance += 1
+        db.update_importance(memories[i])
         query += memories[i].content
 
     return query

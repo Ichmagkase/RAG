@@ -92,6 +92,13 @@ class DBConnection:
         # Commit the transaction to durably save the new row to the database file
         self.con.commit()
 
+    def update_importance(self, mem: Memory):
+        self.cur.execute(
+            "UPDATE memories SET importance = ? WHERE content = ?",
+            (mem.importance, mem.content),
+        )
+        self.con.commit()
+
 
 if __name__ == "__main__":
     # Example usage / Testing block
