@@ -1,4 +1,4 @@
-# TODO: implement a class to handle setting up and querying the model
+from unsloth import FastLanguageModel
 
 
 class Model:
