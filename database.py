@@ -1,13 +1,26 @@
 import sqlite3
-from memory import Memory
 import pickle
+from memory import Memory
 
 
 class DBConnection:
+    """Handles the SQLite database connection and operations for the LLM memory subsystem.
+
+    This class provides the interface for creating the memory schema, inserting new
+    memories with serialized vector embeddings, and retrieving the full memory bank.
+
+    Attributes:
+        con (sqlite3.Connection): The active connection to the SQLite database file.
+        cur (sqlite3.Cursor): The cursor used to execute SQL commands.
+    """
+
     def __init__(self):
+        """Initializes the database connection and ensures the schema exists."""
         self.con = sqlite3.connect("memory.db")
         self.cur = self.con.cursor()
 
+        # Create the memories table if it doesn't already exist on disk.
+        # The embedding is stored as a BLOB because SQLite cannot natively handle vector arrays.
         self.cur.execute("""
             CREATE TABLE IF NOT EXISTS memories (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -18,20 +31,34 @@ class DBConnection:
             );
         """)
 
-    def retrieve_all_memories(self):
-        # 1. Fetch ALL rows from the database
+        # Commit the DDL statement to save the table structure to the database file.
+        self.con.commit()
+
+    def retrieve_all_memories(self) -> list[dict]:
+        """Retrieves and deserializes all memories from the database.
+
+        This method performs a full table scan, pulling every stored memory and
+        unpickling the vector embeddings back into Python lists.
+
+        Returns:
+            list[dict]: A list of dictionaries, where each dictionary represents a row
+                from the database and contains the keys 'id', 'content', 'embedding',
+                and 'importance'.
+        """
+        # Fetch ALL rows from the database (Setup for an O(n) scan)
         self.cur.execute("SELECT id, content, embedding, importance FROM memories")
         rows = self.cur.fetchall()
 
         all_memories = []
 
-        # 2. Iterate through and deserialize the embeddings
+        # Iterate through the results to process the BLOB data
         for row in rows:
             mem_id, content, embedding_blob, importance = row
 
-            # Deserialize the BLOB back into a Python list of floats
+            # Deserialize the BLOB back into a usable Python list of floats
             mem_vector = pickle.loads(embedding_blob)
 
+            # Reconstruct the row as a dictionary for easy access in the application layer
             all_memories.append(
                 {
                     "id": mem_id,
@@ -44,10 +71,16 @@ class DBConnection:
         return all_memories
 
     def store_memory(self, memory: Memory):
-        # 1. Serialize the embedding vector into bytes (BLOB)
+        """Serializes and inserts a new Memory object into the database.
+
+        Args:
+            memory (Memory): The memory data class containing the text content,
+                the float vector embedding, and the importance weight.
+        """
+        # Serialize the embedding vector into raw bytes (BLOB) so SQLite can store it
         embedding_blob = pickle.dumps(memory.embedding)
 
-        # 2. Execute the INSERT statement using parameterized queries
+        # Execute the INSERT statement using parameterized queries (?) to prevent SQL injection
         self.cur.execute(
             """
             INSERT INTO memories (content, embedding, importance)
@@ -56,18 +89,21 @@ class DBConnection:
             (memory.content, embedding_blob, memory.importance),
         )
 
-        # 3. Commit the transaction to save the changes to the file
+        # Commit the transaction to durably save the new row to the database file
         self.con.commit()
 
 
 if __name__ == "__main__":
-    # Example usage
+    # Example usage / Testing block
     connection = DBConnection()
 
+    # Create a dummy memory object for testing
     memory = Memory(content="Query + response", embedding=[1.2, 2.3, 3.4], importance=1)
 
+    # Store the dummy memory
     connection.store_memory(memory)
 
+    # Retrieve all stored memories to verify the insertion and deserialization worked
     memories = connection.retrieve_all_memories()
 
     print(memories)
