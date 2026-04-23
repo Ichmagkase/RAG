@@ -17,7 +17,9 @@ class Transformer:
     def __init__(self):
         """Initializes the Transformer by loading the pretrained model."""
         # 1. Load a pretrained Sentence Transformer model
-        self.model = SentenceTransformer("sentence-transformers/all-MiniLM-L6-v2")
+        self.model: SentenceTransformer = SentenceTransformer(
+            "sentence-transformers/all-MiniLM-L6-v2"
+        )
 
     def compare(self, memory1: Memory, memory2: Memory) -> float:
         """Calculates the cosine similarity between two sentences.
