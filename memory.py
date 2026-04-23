@@ -3,7 +3,7 @@ from pydantic import BaseModel
 
 class Memory(BaseModel):
     content: str
-    embedding: list(float)
+    embedding: list[float]
     importance: int
 
 

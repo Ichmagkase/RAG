@@ -27,6 +27,8 @@ def main():
         print(response)
         store(query, response)
 
+    # TODO: if we also want to keep memories from persisting, we can also delete the database file here before exiting
+
 
 if __name__ == "__main__":
     main()

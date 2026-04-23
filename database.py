@@ -9,7 +9,7 @@ class DBConnection:
         self.cur = self.con.cursor()
 
         self.cur.execute("""
-            CREATE TABLE memories (
+            CREATE TABLE IF NOT EXISTS memories (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 content TEXT NOT NULL,
                 embedding BLOB NOT NULL,
@@ -64,9 +64,7 @@ if __name__ == "__main__":
     # Example usage
     connection = DBConnection()
 
-    memory = Memory(
-        content="Query + response", embeddings=[1.2, 2.3, 3.4], importance=1
-    )
+    memory = Memory(content="Query + response", embedding=[1.2, 2.3, 3.4], importance=1)
 
     connection.store_memory(memory)
 
