@@ -11,7 +11,7 @@ class Transformer:
         similarities = self.model.similarity(embeddings, embeddings)
         difference = similarities[0][0] - similarities[0][1]
 
-        return difference
+        return abs(difference)
 
 
 if __name__ == "__main__":
