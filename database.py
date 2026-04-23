@@ -70,7 +70,7 @@ class DBConnection:
 
         return all_memories
 
-    def store_memory(self, memory: Memory):
+    def store_memory(self, mem: Memory):
         """Serializes and inserts a new Memory object into the database.
 
         Args:
@@ -78,7 +78,7 @@ class DBConnection:
                 the float vector embedding, and the importance weight.
         """
         # Serialize the embedding vector into raw bytes (BLOB) so SQLite can store it
-        embedding_blob = pickle.dumps(memory.embedding)
+        embedding_blob = pickle.dumps(mem.embedding)
 
         # Execute the INSERT statement using parameterized queries (?) to prevent SQL injection
         self.cur.execute(
@@ -86,7 +86,7 @@ class DBConnection:
             INSERT INTO memories (content, embedding, importance)
             VALUES (?, ?, ?)
         """,
-            (memory.content, embedding_blob, memory.importance),
+            (mem.content, embedding_blob, mem.importance),
         )
 
         # Commit the transaction to durably save the new row to the database file
@@ -105,7 +105,7 @@ if __name__ == "__main__":
     connection = DBConnection()
 
     # Create a dummy memory object for testing
-    memory = Memory(
+    mem = Memory(
         content="This will eventually be both the user's query and the AI response concatenated into one big string",
         embedding=torch.tensor(
             [1.2, 2.3, 3.4], dtype=torch.float32
@@ -114,7 +114,7 @@ if __name__ == "__main__":
     )
 
     # Store the dummy memory
-    connection.store_memory(memory)
+    connection.store_memory(mem)
 
     # Retrieve all stored memories to verify the insertion and deserialization worked
     memories = connection.retrieve_all_memories()
