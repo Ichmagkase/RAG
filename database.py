@@ -1,4 +1,5 @@
 import sqlite3
+from memory import Memory
 
 
 class DBConnection:
@@ -16,5 +17,5 @@ class DBConnection:
             );
         """)
 
-    def store_pickle(self, pickle):
+    def store_memory(self, memory: Memory):
         pass
