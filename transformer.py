@@ -1,4 +1,5 @@
 from sentence_transformers import SentenceTransformer
+from memory import Memory
 
 
 class Transformer:
@@ -18,7 +19,7 @@ class Transformer:
         # 1. Load a pretrained Sentence Transformer model
         self.model = SentenceTransformer("sentence-transformers/all-MiniLM-L6-v2")
 
-    def compare(self, sentence1: str, sentence2: str) -> float:
+    def compare(self, memory1: Memory, memory2: Memory) -> float:
         """Calculates the cosine similarity between two sentences.
 
         This method encodes both sentences into vector space and computes
@@ -33,23 +34,21 @@ class Transformer:
         Returns:
             float: The absolute cosine similarity score between the two vectors.
         """
-        embeddings = self.model.encode([sentence1, sentence2])
-        similarities = self.model.similarity(embeddings, embeddings)
+        similarities = self.model.similarity(memory1.embedding, memory2.embedding)
 
         # similarities[0][1] extracts the cosine similarity between sentence1 and sentence2
         difference = similarities[0][1]
 
         return float(difference)
 
+    def encode(self, query: str):
+        return self.model.encode(query, convert_to_tensor=True)
+
+    def sort_by_relevance(self, memories: list[Memory]):
+        # TODO: Implement sorting a list of memories by relevance
+        pass
+
 
 if __name__ == "__main__":
     # Example usage:
     t = Transformer()
-
-    # Expected: Lower similarity score
-    print("Similarity 1:", t.compare("I walked my dog yesterday", "I own a cat"))
-
-    # Expected: Higher similarity score (due to shared dog context)
-    print(
-        "Similarity 2:", t.compare("I walked my dog today", "dogs like to eat dog food")
-    )

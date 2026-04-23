@@ -1,19 +1,44 @@
 from database import DBConnection
+from transformer import Transformer
+from model import Model
+from memory import Memory
+from pathlib import Path
 
 db = DBConnection()
+t = Transformer()
+model = Model()  # TODO: Update later if necessary based on Model implementation
+
+top_k = 5
 
 
-def add_context(user_input):
-    # add user
-    return user_input
+def add_context(user_input: str) -> str:
+    memories = db.retrieve_all_memories()
+    t.sort_by_relevance(memories)
+    query: str = user_input
 
+    query += "\n\n---ADDITIONAL CONTEXT FROM PREVIOUS CONVERSATIONS HAS BEEN ADDED BELOW---\n\n"
 
-def prompt(query):
+    for i in range(top_k):
+        if i > len(memories) - 1:
+            break
+        memories[i].importance += 1
+        query += memories[i].content
+
     return query
 
 
-def store(query, response):
-    pass
+def prompt(query: str) -> str:
+    # TODO: This is where the AI model will be prompted, and the response will be returned
+    return "Hi! I'm not an AI, and this probably isn't a very helpful response, but I'm putting it here for debug purposes!"
+
+
+def store(query: str, response: str) -> None:
+    new_memory = Memory(
+        content=query + response,
+        embedding=t.encode(query + response),
+        importance=1,
+    )
+    db.store_memory(new_memory)
 
 
 def main():
@@ -25,9 +50,11 @@ def main():
         query = add_context(user_input)
         response = prompt(query)
         print(response)
-        store(query, response)
+        store(user_input, response)
 
-    # TODO: if we also want to keep memories from persisting, we can also delete the database file here before exiting
+    db_path = Path("memory.db")
+    if db_path.exists():
+        db_path.unlink()
 
 
 if __name__ == "__main__":
