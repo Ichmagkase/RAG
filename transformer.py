@@ -38,7 +38,7 @@ class Transformer:
         """
         similarities = self.model.similarity(memory1.embedding, memory2.embedding)
 
-        # similarities[0][1] extracts the cosine similarity between sentence1 and sentence2
+        # similarities[0][0] extracts the cosine similarity between sentence1 and sentence2
         difference = similarities[0][0]
 
         return float(difference)
