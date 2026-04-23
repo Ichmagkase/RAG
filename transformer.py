@@ -46,9 +46,11 @@ class Transformer:
     def encode(self, query: str):
         return self.model.encode(query, convert_to_tensor=True)
 
-    def sort_by_relevance(self, memories: list[Memory]):
-        # TODO: Implement sorting a list of memories by relevance
-        pass
+    def sort_by_relevance(self, memories: list[Memory], query: str):
+        # TODO: add docstring
+        query_embedding = self.encode(query)
+        query_memory = Memory(content=query, embedding=query_embedding, importance=1)
+        memories.sort(key=lambda m: self.compare(query_memory, m), reverse=True)
 
 
 if __name__ == "__main__":
