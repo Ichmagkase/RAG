@@ -18,4 +18,6 @@ class DBConnection:
         """)
 
     def store_memory(self, memory: Memory):
-        pass
+        self.cur.execute("""
+            
+        """)
