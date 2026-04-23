@@ -2,6 +2,17 @@ from pydantic import BaseModel
 
 
 class Memory(BaseModel):
+    """Represents a single memory unit within the LLM memory subsystem.
+
+    This model defines the structure of a memory before it is serialized
+    and stored in the database.
+
+    Attributes:
+        content (str): The raw text content of the user input and LLM response.
+        embedding (list[float]): The representation of the content.
+        importance (int): The weight or access frequency of the memory. Defaults to 1.
+    """
+
     content: str
     embedding: list[float]
     importance: int
