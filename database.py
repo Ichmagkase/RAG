@@ -33,3 +33,14 @@ class DBConnection:
 
         # 3. Commit the transaction to save the changes to the file
         self.con.commit()
+
+
+if __name__ == "__main__":
+    # Example usage
+    connection = DBConnection()
+
+    memory = Memory(
+        content="Query + response", embeddings=[1.2, 2.3, 3.4], importance=1
+    )
+
+    connection.store_memory(memory)
