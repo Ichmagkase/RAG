@@ -7,7 +7,7 @@ db = DBConnection()
 t = Transformer()
 model = Model()  # TODO: Update later if necessary based on Model implementation
 
-top_k = 5
+top_k = 2
 
 
 def add_context(user_input: str) -> str:
@@ -15,14 +15,24 @@ def add_context(user_input: str) -> str:
     t.sort_by_relevance(memories, user_input)
     query: str = user_input
 
-    query += "\n\n---ADDITIONAL CONTEXT FROM PREVIOUS CONVERSATIONS HAS BEEN ADDED BELOW---\n\n"
-
+    relevant_memories = []
     for i in range(top_k):
         if i > len(memories) - 1:
             break
         memories[i].importance += 1
         db.update_importance(memories[i])
-        query += memories[i].content
+        relevant_memories.append(memories[i].content)
+
+    if relevant_memories:
+        query += "\n\n---ADDITIONAL CONTEXT FROM PREVIOUS CONVERSATIONS HAS BEEN ADDED BELOW---\n\n"
+        query += "\n".join(relevant_memories)
+
+    # for i in range(top_k):
+    #     if i > len(memories) - 1:
+    #         break
+    #     memories[i].importance += 1
+    #     db.update_importance(memories[i])
+    #     query += memories[i].content
 
     return query
 
