@@ -1,0 +1,12 @@
+services:
+  app:
+    build: .
+    runtime: nvidia
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=all
+    volumes:
+      - huggingface_cache:/root/.cache/huggingface
+      - ./memory.db:/app/memory.db
+
+volumes:
+  huggingface_cache:
