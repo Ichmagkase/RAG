@@ -28,6 +28,9 @@
   - `model.py` - local model inference wrapper
   - `cleanup.py` - utility to delete/reset `memory.db`
   - `docker-compose.yml` / `Dockerfile` - container setup
+  ## Run natively
+  ### `uv sync`
+  ### `uv run main.py`
   ## Docker Run
   ### 1) Build and start container
   ```bash
