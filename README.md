@@ -31,16 +31,3 @@
   ## Run natively
   ### `uv sync`
   ### `uv run main.py`
-  ## Docker Run
-  ### 1) Build and start container
-  ```bash
-  docker compose up --build
-  ```
-  ### 2) Run in detached mode (optional)
-  ```bash
-  docker compose up -d --build
-  ```
-  ### 3) Stop services
-  ```bash
-  docker compose down
-  ```
